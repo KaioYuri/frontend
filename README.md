@@ -1,6 +1,6 @@
 # [Sistema de gerenciamento]() &middot; [![Autor Kaio](https://img.shields.io/badge/Autor-Kaio-%3C%3E)](https://kaioyuri.vercel.app)
 
-Sistema gerênciamento construido com [shadcn/ui](https://ui.shadcn.com) completo com responsividade para ambientes mobile e android.
+Sistema de gerenciamento construido com [shadcn/ui](https://ui.shadcn.com) completo com responsividade para ambientes mobile e desktop.
 
 ## Features
 
@@ -10,8 +10,9 @@ Sistema gerênciamento construido com [shadcn/ui](https://ui.shadcn.com) complet
 - Menu agrupado com rótulos
 - Submenu recolhível
 - Lista de itens do menu extraída
-- Formulário de registro de atividades, clientes e colaboradores.
+- Formulário de registro de atividades (com upload de imagem), clientes e colaboradores.
 - Tabela de pesquisa com filtro para atividades, clientes e colaboradores.
+
 
 
 ## Techs/frameworks usados
