@@ -41,12 +41,11 @@ No diretório a sua escolha você irá:
    ```bash
    cd ./frontend/
    ```
-
 3. Executar o Dockerfile
-  ```bash
-  docker build -t frontend-dev-app .
-  docker run -p 3001:3000 nextjs-dev-app
-  ```
+   ```bash
+    docker build -t frontend-dev-app .
+    docker run -p 3001:3000 nextjs-dev-app
+   ```
 
 4. Va para a URL `http://localhost:3000/` e a aplicação estará rodando
 Obs: caso a página não esteja la , significa que tem um serviço rodando na porta 3000.
