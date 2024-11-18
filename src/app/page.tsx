@@ -43,7 +43,7 @@ export default function HomePage() {
             <span className="max-w-[750px] text-center text-lg font-light text-foreground">
               Aqui será gerenciado atividades entre clientes e colaboradores, controlando status e registros.
             </span>
-            <div className="flex w-full items-center justify-center space-x-4 py-4 md:pb-6">
+            <div className="flex flex-col md:flex-row w-full items-center justify-center space-y-2 md:space-y-0 md:space-x-4 py-4 md:pb-6">
               <Button variant="default" asChild>
                 <Link href="/dashboard">
                   Dashboard

@@ -1,12 +1,15 @@
 import {
   Tag,
   Users,
+  UsersRound,
+  Search,
   Settings,
   Bookmark,
   SquarePen,
   LayoutGrid,
   LucideIcon
 } from "lucide-react";
+import { Icon } from "next/dist/lib/metadata/types/metadata-types";
 
 type Submenu = {
   href: string;
@@ -41,12 +44,12 @@ export function getMenuList(pathname: string): Group[] {
       ]
     },
     {
-      groupLabel: "Contents",
+      groupLabel: "Páginas",
       menus: [
         {
           href: "",
           label: "Clientes",
-          icon: Users,
+          icon: UsersRound,
           submenus: [
             {
               href: "/clientes",
@@ -74,9 +77,19 @@ export function getMenuList(pathname: string): Group[] {
           ]
         },
         {
-          href: "/tags",
-          label: "Tags",
-          icon: Tag
+          href: "/atividades",
+          label: "Atividades",
+          icon: Tag,
+          submenus: [
+            {
+              href: "/atividades",
+              label: "Pesquisar"
+            },
+            {
+              href: "/atividades/registrar",
+              label: "Registrar"
+            }
+          ]
         }
       ]
     },
