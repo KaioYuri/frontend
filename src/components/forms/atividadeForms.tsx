@@ -29,6 +29,9 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
+import ImageUpload from "../image-upload";
+import { useState } from "react";
+
 
 const formSchema = z.object({
   descricao: z.string().min(2).max(50),
@@ -53,20 +56,26 @@ export function ProfileForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
-  }
+  };
+
+  const [imageURL, setImageURL] = useState<string | null>(null);
+
+  const handleUploadComplete = (url: string) => {
+    setImageURL(url);
+  };
   return (
-    <div className="flex min-h-[60vh] h-full w-full items-center justify-center px-4">
-    <Card className="mx-auto max-w-sm">
+    <div className="flex min-h-[70vh] h-full w-full items-center justify-center px-4">
+    <Card className="mx-auto max-w-sm mt-6">
       <CardHeader>
         <CardTitle className="text-2xl">Atividade</CardTitle>
         <CardDescription>
-          Regitre uma nova Atividade.
+          Registre uma nova Atividade.
         </CardDescription>
       </CardHeader>
       <CardContent>
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-      <div className="grid gap-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <div className="grid gap-2">
         <FormField
           control={form.control}
           name="descricao"
@@ -136,7 +145,8 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <ImageUpload onUploadComplete={handleUploadComplete} />
+        <Button type="submit">Criar</Button>
         </div>
       </form>
     </Form>
