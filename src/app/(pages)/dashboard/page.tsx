@@ -53,7 +53,7 @@ export default function DashboardPage() {
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Econder a barra lateral</p>
+              <p>Econder a barra lateral (apenas para desktops)</p>
             </TooltipContent>
           </Tooltip>
         </div>
