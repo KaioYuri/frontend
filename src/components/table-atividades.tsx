@@ -7,35 +7,50 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 
+// Definindo o tipo da resposta da API
+type AtividadesResponse = {
+  message: string;
+  atividades: AtividadeData[];
+};
+
 export function AtividadesTable() {
-  const [atividades, setAtividades] = useState<AtividadeData[]>([]);
+  const [atividades, setAtividades] = useState<AtividadeData[]>([]); // Definindo explicitamente o tipo
   const [statusFilter, setStatusFilter] = useState<"ABERTA" | "CONCLUIDA" | "">("");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     async function fetchAtividades() {
       try {
-        const data = await atividadesService.getAll();
-        setAtividades(data);
+        const data: AtividadesResponse = await atividadesService.getAll();
+        console.log("Resposta da API:", data);
+    
+        // Verifica se o formato da resposta está correto
+        if (Array.isArray(data.atividades)) {
+          console.log("Atividades recebidas:", data.atividades);
+          setAtividades(data.atividades); // Aqui você está salvando o array de atividades
+        } else {
+          console.error("Esperado um array de atividades, mas recebeu:", data.atividades);
+        }
       } catch (error) {
         console.error("Erro ao carregar atividades:", error);
       }
     }
-
+  
     fetchAtividades();
   }, []);
-
-  const filteredAtividades = atividades.filter((atividade) => {
-    const matchesStatus = statusFilter ? atividade.status === statusFilter : true;
-    const matchesQuery = searchQuery
-      ? atividade.descricao.toLowerCase().includes(searchQuery.toLowerCase())
-      : true;
-    return matchesStatus && matchesQuery;
-  });
+  
+  
+  const fetchAtividades = async () => {
+    try {
+      const { atividades } = await atividadesService.getAll();
+      setAtividades(atividades); // Atualize o estado com o array de atividades
+    } catch (error) {
+      console.error("Erro ao carregar atividades:", error);
+    }
+  };
+  
 
   return (
     <main className="container mx-auto px-4 md:px-6 py-8">
@@ -93,20 +108,6 @@ export function AtividadesTable() {
                   Filtros e busca aplicados dinamicamente.
                 </p>
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="ml-auto shrink-0">
-                    <ArrowUpDownIcon className="w-4 h-4 mr-2" />
-                    Ordenar
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-[200px]" align="end">
-                  <DropdownMenuRadioGroup>
-                    <DropdownMenuRadioItem value="descricao">Descrição</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="status">Status</DropdownMenuRadioItem>
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
             <Table>
               <TableHeader>
@@ -118,23 +119,24 @@ export function AtividadesTable() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredAtividades.length > 0 ? (
-                  filteredAtividades.map((atividade) => (
-                    <TableRow key={atividade.id}>
-                      <TableCell>{atividade.descricao}</TableCell>
-                      <TableCell>{atividade.clienteId}</TableCell>
-                      <TableCell>{atividade.colaboradorId}</TableCell>
-                      <TableCell>{atividade.status}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={4} className="text-center">
-                      Nenhuma atividade encontrada.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
+          {atividades.length > 0 ? (
+            atividades.map((atividade) => (
+                <TableRow key={atividade.id}>
+                  <TableCell>{atividade.descricao}</TableCell>
+                  <TableCell>{atividade.cliente.nome}</TableCell>
+                  <TableCell>{atividade.colaborador.nome}</TableCell> {/* Acesso ao nome do colaborador */}
+                  <TableCell>{atividade.status}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center">
+                  Nenhuma atividade encontrada.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+
             </Table>
           </div>
         </div>

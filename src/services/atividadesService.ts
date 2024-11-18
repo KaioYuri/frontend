@@ -1,13 +1,21 @@
 import axios from "axios";
 import { AtividadeData } from "@/types/atividades";
 
+// A URL da API
 const API_URL = "http://localhost:3000/api/atividades";
 
+// Definindo a estrutura da resposta esperada
+type AtividadesResponse = {
+  message: string;
+  atividades: AtividadeData[];
+};
+
 export const atividadesService = {
-  async getAll(): Promise<AtividadeData[]> {
+  async getAll(): Promise<AtividadesResponse> {
     try {
-      const response = await axios.get<AtividadeData[]>(API_URL);
-      return response.data;
+      // Ajustar o tipo da resposta esperada
+      const response = await axios.get<AtividadesResponse>(API_URL);
+      return response.data; // Retornar exatamente como a API manda
     } catch (error) {
       console.error("Erro ao buscar atividades:", error);
       throw error;

@@ -1,78 +1,101 @@
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
 import ImageUpload from "../image-upload";
 
 const formSchema = z.object({
   descricao: z.string().min(2, "Descrição é obrigatória").max(50, "Máximo de 50 caracteres"),
-  status: z.enum(["ABERTO", "CONCLUIDO"]),
-  cliente: z.string().min(2, "Cliente é obrigatório").max(50, "Máximo de 50 caracteres"),
-  colaborador: z.string().min(2, "Colaborador é obrigatório").max(50, "Máximo de 50 caracteres"),
-  foto: z.string().optional(),
+  status: z.enum(["ABERTA", "CONCLUIDA"]),
+  clienteId: z.string().min(1, "Cliente é obrigatório"),
+  colaboradorId: z.string().min(1, "Colaborador é obrigatório"),
+  fotos: z.string().array().optional(),
 });
 
 export function ProfileForm() {
   const [loading, setLoading] = useState(false);
-  const [imageURL, setImageURL] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [clientes, setClientes] = useState([]);
+  const [colaboradores, setColaboradores] = useState([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       descricao: "",
-      status: "ABERTO",
-      cliente: "",
-      colaborador: "",
-      foto: "",
+      status: "ABERTA",
+      clienteId: "",
+      colaboradorId: "",
+      fotos: [],
     },
   });
 
+  // Fetch Clientes e Colaboradores
+  useEffect(() => {
+    async function fetchOptions() {
+      try {
+        const [clientesRes, colaboradoresRes] = await Promise.all([
+          axios.get("http://localhost:3000/api/clientes"),
+          axios.get("http://localhost:3000/api/colaboradores"),
+        ]);
+        setClientes(clientesRes.data.clientes || []);
+        setColaboradores(colaboradoresRes.data.colaboradores || []);
+      } catch (error) {
+        toast.error("Erro ao carregar clientes ou colaboradores.");
+        console.error(error);
+      }
+    }
+    fetchOptions();
+  }, []);
+
   const handleUploadComplete = (url: string) => {
-    setImageURL(url);
-    form.setValue("foto", url); // Atualiza o campo "foto" com a URL da imagem
+    form.setValue("fotos", [...(form.getValues("fotos") || []), url]);
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-    setError(null);
+
     try {
-      const response = await axios.post("/api/atividades", values); // Altere para o endpoint correto
-      console.log("Atividade criada:", response.data);
-      alert("Atividade criada com sucesso!");
-      form.reset(); // Limpa o formulário após o envio
-      setImageURL(null);
+      const payload = {
+        descricao: values.descricao,
+        status: values.status,
+        clienteId: parseInt(values.clienteId, 10),
+        colaboradorId: parseInt(values.colaboradorId, 10),
+        fotos: values.fotos,
+      };
+      const { data } = await axios.post("http://localhost:3000/api/atividades", payload);
+      toast.success("Atividade criada com sucesso!");
+      console.log("Atividade criada:", data);
+      form.reset();
     } catch (err) {
       console.error("Erro ao criar atividade:", err);
-      setError("Erro ao criar a atividade. Tente novamente.");
+      toast.error("Erro ao criar a atividade. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -88,76 +111,92 @@ export function ProfileForm() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid gap-2">
-                <FormField
-                  control={form.control}
-                  name="descricao"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Descrição</FormLabel>
+              <FormField
+                control={form.control}
+                name="descricao"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Descrição da atividade" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <Input placeholder="Descrição da atividade" {...field} />
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o status" />
+                        </SelectTrigger>
                       </FormControl>
-                      <FormDescription>Descreva a atividade.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="ABERTO">ABERTO</SelectItem>
-                          <SelectItem value="CONCLUIDO">CONCLUIDO</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="cliente"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cliente</FormLabel>
+                      <SelectContent>
+                        <SelectItem value="ABERTA">ABERTA</SelectItem>
+                        <SelectItem value="CONCLUIDA">CONCLUIDA</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="clienteId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cliente</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <Input placeholder="Nome do cliente" {...field} />
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um cliente" />
+                        </SelectTrigger>
                       </FormControl>
-                      <FormDescription>Nome do cliente.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="colaborador"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Colaborador</FormLabel>
+                      <SelectContent>
+                        {clientes.map((cliente: any) => (
+                          <SelectItem key={cliente.id} value={cliente.id.toString()}>
+                            {cliente.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="colaboradorId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Colaborador</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <Input placeholder="Nome do colaborador" {...field} />
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um colaborador" />
+                        </SelectTrigger>
                       </FormControl>
-                      <FormDescription>Nome do colaborador.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <ImageUpload onUploadComplete={handleUploadComplete} />
-                {error && <p className="text-red-500">{error}</p>}
-                <Button type="submit" disabled={loading}>
-                  {loading ? "Enviando..." : "Criar"}
-                </Button>
-              </div>
+                      <SelectContent>
+                        {colaboradores.map((colaborador: any) => (
+                          <SelectItem key={colaborador.id} value={colaborador.id.toString()}>
+                            {colaborador.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <ImageUpload onUploadComplete={handleUploadComplete} />
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? "Enviando..." : "Criar"}
+              </Button>
             </form>
           </Form>
         </CardContent>
