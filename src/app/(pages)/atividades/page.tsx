@@ -10,6 +10,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import { AtividadesTable } from "@/components/table-atividades";
+
 
 export default function PostsPage() {
   return (
@@ -33,7 +35,7 @@ export default function PostsPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
- 
+      <AtividadesTable/>
     </ContentLayout>
   );
 }
