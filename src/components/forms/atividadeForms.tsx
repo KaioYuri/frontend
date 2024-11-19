@@ -32,6 +32,7 @@ import {
 
 import ImageUpload from "../image-upload";
 
+// Definição do esquema de validação
 const formSchema = z.object({
   descricao: z.string().min(2, "Descrição é obrigatória").max(50, "Máximo de 50 caracteres"),
   status: z.enum(["ABERTA", "CONCLUIDA"]),
@@ -40,13 +41,15 @@ const formSchema = z.object({
   fotos: z.string().array().optional(),
 });
 
+type FormData = z.infer<typeof formSchema>;
 
 export function ProfileForm() {
   const [loading, setLoading] = useState(false);
-  const [clientes, setClientes] = useState([]);
-  const [colaboradores, setColaboradores] = useState([]);
+  const [clientes, setClientes] = useState<{ id: string; nome: string }[]>([]);
+  const [colaboradores, setColaboradores] = useState<{ id: string; nome: string }[]>([]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  // Inicializando o formulário com a validação
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       descricao: "",
@@ -57,7 +60,7 @@ export function ProfileForm() {
     },
   });
 
-  // Fetch Clientes e Colaboradores
+  // Função para carregar as opções de clientes e colaboradores
   useEffect(() => {
     async function fetchOptions() {
       try {
@@ -75,19 +78,21 @@ export function ProfileForm() {
     fetchOptions();
   }, []);
 
+  // Função para lidar com o upload de fotos
   const handleUploadComplete = (url: string) => {
     form.setValue("fotos", [...(form.getValues("fotos") || []), url]);
   };
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  // Função para enviar os dados do formulário
+  async function onSubmit(values: FormData) {
     setLoading(true);
 
     try {
       const payload = {
         descricao: values.descricao,
         status: values.status,
-        clienteId: parseInt(values.clienteId, 10),
-        colaboradorId: parseInt(values.colaboradorId, 10),
+        clienteId: parseInt(values.clienteId, 10), // Corrigindo a conversão de ID
+        colaboradorId: parseInt(values.colaboradorId, 10), // Corrigindo a conversão de ID
         fotos: values.fotos,
       };
       const { data } = await axios.post("http://localhost:3000/api/atividades", payload);
@@ -159,8 +164,8 @@ export function ProfileForm() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {clientes.map((cliente: any) => (
-                          <SelectItem key={cliente.id} value={cliente.id.toString()}>
+                        {clientes.map((cliente) => (
+                          <SelectItem key={cliente.id} value={cliente.id}>
                             {cliente.nome}
                           </SelectItem>
                         ))}
@@ -183,8 +188,8 @@ export function ProfileForm() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {colaboradores.map((colaborador: any) => (
-                          <SelectItem key={colaborador.id} value={colaborador.id.toString()}>
+                        {colaboradores.map((colaborador) => (
+                          <SelectItem key={colaborador.id} value={colaborador.id}>
                             {colaborador.nome}
                           </SelectItem>
                         ))}

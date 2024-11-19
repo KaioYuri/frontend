@@ -10,8 +10,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import { ClientesTable } from "@/components/tables/table-clientes";
 
-export default function PostsPage() {
+
+export default function ClientesPage() {
   return (
     <ContentLayout title="Pesquisar cliente">
       <Breadcrumb>
@@ -33,7 +35,7 @@ export default function PostsPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
- 
+    <ClientesTable/>
     </ContentLayout>
   );
 }

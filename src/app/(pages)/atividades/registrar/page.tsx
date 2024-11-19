@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { ProfileForm } from "@/components/forms/atividadeForms";
 
-export default function ClienteRegistroPage() {
+export default function AtividadeRegistroPage() {
   return (
     <ContentLayout title="Registrar nova atividade">
       <Breadcrumb>

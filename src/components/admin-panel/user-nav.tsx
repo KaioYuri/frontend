@@ -61,7 +61,7 @@ export function UserNav() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/conta" className="flex items-center">
+            <Link href="#" className="flex items-center">
               <User className="w-4 h-4 mr-3 text-muted-foreground" />
               Conta
             </Link>

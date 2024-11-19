@@ -13,9 +13,8 @@ type AtividadesResponse = {
 export const atividadesService = {
   async getAll(): Promise<AtividadesResponse> {
     try {
-      // Ajustar o tipo da resposta esperada
       const response = await axios.get<AtividadesResponse>(API_URL);
-      return response.data; // Retornar exatamente como a API manda
+      return response.data;
     } catch (error) {
       console.error("Erro ao buscar atividades:", error);
       throw error;
@@ -57,6 +56,17 @@ export const atividadesService = {
       await axios.delete(`${API_URL}/${id}`);
     } catch (error) {
       console.error(`Erro ao deletar atividade com ID ${id}:`, error);
+      throw error;
+    }
+  },
+
+  // Novo método para atualizar o status
+  async updateStatus(id: number, status: string): Promise<AtividadeData> {
+    try {
+      const response = await axios.patch<AtividadeData>(`${API_URL}/${id}/status`, { status });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao atualizar status da atividade com ID ${id}:`, error);
       throw error;
     }
   },

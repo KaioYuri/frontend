@@ -10,10 +10,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import { ColaboradoresTable } from "@/components/tables/table-colaboradores";
 
-export default function UsersPage() {
+
+export default function ColaboradoresPage() {
   return (
-    <ContentLayout title="Users">
+    <ContentLayout title="Pesquisar colaborador">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -33,7 +35,7 @@ export default function UsersPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
- 
+    <ColaboradoresTable/>
     </ContentLayout>
   );
 }

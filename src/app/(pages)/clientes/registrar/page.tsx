@@ -10,6 +10,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import { ClienteForm } from "@/components/forms/clienteForms";
+
 
 export default function ClienteRegistroPage() {
   return (
@@ -30,7 +32,7 @@ export default function ClienteRegistroPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/cliente">Cliente</Link>
+              <Link href="/clientes">Clientes</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
@@ -39,7 +41,7 @@ export default function ClienteRegistroPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
- 
+    <ClienteForm/>
     </ContentLayout>
   );
 }

@@ -10,10 +10,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
-import { AtividadesTable } from "@/components/table-atividades";
+import { AtividadesTable } from "@/components/tables/table-atividades";
 
 
-export default function PostsPage() {
+export default function AtividadesPage() {
   return (
     <ContentLayout title="Pesquisar cliente">
       <Breadcrumb>

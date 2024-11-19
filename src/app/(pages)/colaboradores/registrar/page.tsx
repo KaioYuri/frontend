@@ -10,6 +10,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import { ColaboradorForm } from "@/components/forms/colaboradorForms";
+
 
 export default function ColaboradorRegistroPage() {
   return (
@@ -39,7 +41,7 @@ export default function ColaboradorRegistroPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
- 
+      <ColaboradorForm/>
     </ContentLayout>
   );
 }
